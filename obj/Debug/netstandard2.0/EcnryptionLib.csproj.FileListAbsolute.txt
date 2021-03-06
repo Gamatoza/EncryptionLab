@@ -1,0 +1,9 @@
+D:\_Educate\Visual\EcnryptionLib\bin\Debug\netstandard2.0\EcnryptionLib.deps.json
+D:\_Educate\Visual\EcnryptionLib\bin\Debug\netstandard2.0\EcnryptionLib.dll
+D:\_Educate\Visual\EcnryptionLib\bin\Debug\netstandard2.0\EcnryptionLib.pdb
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EcnryptionLib.csprojAssemblyReference.cache
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EcnryptionLib.AssemblyInfoInputs.cache
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EcnryptionLib.AssemblyInfo.cs
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EcnryptionLib.csproj.CoreCompileInputs.cache
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EcnryptionLib.dll
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EcnryptionLib.pdb

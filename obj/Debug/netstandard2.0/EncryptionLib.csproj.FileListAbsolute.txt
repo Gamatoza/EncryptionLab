@@ -1,0 +1,9 @@
+D:\_Educate\Visual\EcnryptionLib\bin\Debug\netstandard2.0\EncryptionLib.deps.json
+D:\_Educate\Visual\EcnryptionLib\bin\Debug\netstandard2.0\EncryptionLib.dll
+D:\_Educate\Visual\EcnryptionLib\bin\Debug\netstandard2.0\EncryptionLib.pdb
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.csprojAssemblyReference.cache
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.AssemblyInfoInputs.cache
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.AssemblyInfo.cs
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.csproj.CoreCompileInputs.cache
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.dll
+D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.pdb
