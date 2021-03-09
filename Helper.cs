@@ -30,8 +30,8 @@ namespace EncryptionLib
                 int count = length / key.Length + 1;
                 if (count == 1) return key;
                 if (count > 1)
-                    return string.Concat(Enumerable.Repeat(key, count));
-                else
+                    key = string.Concat(Enumerable.Repeat(key, count));
+                    //int len = key.Length;
                     return key.Substring(0, length);
             }
             else throw new DivideByZeroException("key is null");

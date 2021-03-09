@@ -240,10 +240,11 @@ namespace EncryptionLib
         public static string EncodePrograssiveKey(string input, string key)
         {
             input = input.ToUpper();
-            key = Helper.PrepareKey__Fill(key, input.Length);
+            key = Helper.PrepareKey__Fill(key, input.Length).ToUpper();
 
             string result = "";
             int length = input.Length;
+            if (length != key.Length) throw new Exception("Key length don't equals to input text length");
             int index, level;
             for (int i = 0; i < length; i++)
             {
@@ -251,7 +252,7 @@ namespace EncryptionLib
                 index = Array.IndexOf(alphabet_array, input[i]);
                 if (index == -1) result += input[i]; //ignorring if is not our alphabet
                 else
-                    result += progressivekey[index, level];
+                    result += progressivekey[index, level + 1];
             }
 
             return result;
@@ -259,7 +260,7 @@ namespace EncryptionLib
         public static string DecodePrograssiveKey(string input, string key)
         {
             input = input.ToUpper();
-            key = Helper.PrepareKey__Fill(key, input.Length);
+            key = Helper.PrepareKey__Fill(key, input.Length).ToUpper();
 
             string result = "";
             int length = input.Length;
@@ -271,9 +272,7 @@ namespace EncryptionLib
                 if (index == -1) result += input[i]; //ignorring if is not our alphabet
                 else 
                 {
-                    if (level == 0)
-                        level = 1; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    result += progressivekey[index,N - level];
+                    result += progressivekey[index,N - 1 - level];
                 }
             }
 
