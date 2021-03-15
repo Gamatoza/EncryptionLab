@@ -7,3 +7,12 @@ D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.Assembly
 D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.csproj.CoreCompileInputs.cache
 D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.dll
 D:\_Educate\Visual\EcnryptionLib\obj\Debug\netstandard2.0\EncryptionLib.pdb
+D:\Educate\code2\EncryptionLab\bin\Debug\netstandard2.0\EncryptionLib.deps.json
+D:\Educate\code2\EncryptionLab\bin\Debug\netstandard2.0\EncryptionLib.dll
+D:\Educate\code2\EncryptionLab\bin\Debug\netstandard2.0\EncryptionLib.pdb
+D:\Educate\code2\EncryptionLab\obj\Debug\netstandard2.0\EncryptionLib.csprojAssemblyReference.cache
+D:\Educate\code2\EncryptionLab\obj\Debug\netstandard2.0\EncryptionLib.csproj.CoreCompileInputs.cache
+D:\Educate\code2\EncryptionLab\obj\Debug\netstandard2.0\EncryptionLib.AssemblyInfoInputs.cache
+D:\Educate\code2\EncryptionLab\obj\Debug\netstandard2.0\EncryptionLib.AssemblyInfo.cs
+D:\Educate\code2\EncryptionLab\obj\Debug\netstandard2.0\EncryptionLib.dll
+D:\Educate\code2\EncryptionLab\obj\Debug\netstandard2.0\EncryptionLib.pdb

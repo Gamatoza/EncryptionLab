@@ -23,7 +23,7 @@ namespace EncryptionLib
 
             private char simbol;
             private int i, j;
-            Point(int i,int j, char simbol)
+            public Point(int i,int j, char simbol)
             {
                 this.i = i;
                 this.j = j;
@@ -31,30 +31,11 @@ namespace EncryptionLib
             }
             public char Simbol
             {
-                get { return simbol; } 
+                get { return simbol; }
                 set {
                     simbol = value;
-                    //TakeASimbolFromKeyMap(char simb);
+                    //TakeASimbolFromKeyMap(simbol);
                 }
-            }
-
-            public void TakeASimbolFromKeyMap(char simb)
-            {
-                simbol = '*';
-                for (int i = 0; i < rows; i++)
-                {
-                    for (int j = 0; j < columns; j++)
-                    {
-                        if (simb == keymap[i, j])
-                        {
-                            this.i = i;
-                            this.j = j;
-                            simbol = simb;
-                            break;
-                        }
-                    }
-                }
-                if (simbol == '*') throw new Exception("The simbol is not on the keymap");
             }
 
             public void UpdateSimbol()
@@ -177,20 +158,10 @@ namespace EncryptionLib
             Point first = from[0];
             Point second = from[1];
 
-            int diff = Math.Abs(first.I - second.I);
-            //выбираем верхний и нижний
-            if (first.I < second.I)
-            {
-                first.I += diff;
-
-                second.I -= diff;
-            }
-            else
-            {
-
-                first.I -= diff;
-                second.I += diff;
-            }
+            first.I = second.I;
+            first.UpdateSimbol();
+            second.UpdateSimbol();
+            
             return new Bigramm(first, second); ;
         }
 
@@ -208,11 +179,30 @@ namespace EncryptionLib
 
             public string SData { get { return "" + data[0] + data[1]; } }
 
+            private Point TakeaPointFromKeymap(char simbol)
+            {
+                int row = -1, column = -1;
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < columns; j++)
+                    {
+                        if (simbol == keymap[i, j])
+                        {
+                            row = i;
+                            column = j;
+                            break;
+                        }
+                    }
+                }
+                if (row == -1 || column == -1) throw new Exception("The simbol is not on the keymap");
+                return new Point(row, column, simbol);
+            }
+
             public Bigramm(char first,char second)
             {
                 data = new Point[2];
-                data[0].Simbol = first;
-                data[1].Simbol = second;
+                data[0] = TakeaPointFromKeymap(first);
+                data[1] = TakeaPointFromKeymap(second);
                 //data = ""+first+second;
             }
 
@@ -322,10 +312,10 @@ namespace EncryptionLib
                 {
                     throw new Exception("Text has repeated simbols, check ExcludeRepetitionsLatters() for work");
                 }
-                result += item[0].Simbol + item[1].Simbol;
+                result += "" + item[0].Simbol + item[1].Simbol;
             }
 
-            return biarray.ToString();
+            return result;
         }
         public static string Decode()
         {
