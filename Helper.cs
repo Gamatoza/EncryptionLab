@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace EncryptionLib
 {
     //TODO: Класс для сериализации
@@ -13,6 +16,7 @@ namespace EncryptionLib
     //
     //
     //
+
     public static class Helper
     {
 
@@ -35,6 +39,15 @@ namespace EncryptionLib
                     return key.Substring(0, length);
             }
             else throw new DivideByZeroException("key is null");
+        }
+
+        public static void WriteFileText(string text)
+        {
+            
+        }
+        public static void ReadFile(string text)
+        {
+
         }
     }
 }

@@ -8,12 +8,56 @@ namespace EncryptionLib
     /// Если индекс столбца доходит до ключа, то переменная изменения становится -1, иначе если доходит до 0, то становится 1
     /// Таким образом мы как бы скачем от стенки матрицы к стенке, заполняя ее символами из слова, до тех пор, пока колонца не достигнет количества символов в тексте
     /// </summary>
-    public class Railway
+    [Serializable]
+    public class Railway:ICryptoBasic
     {
-        public static int K { get; set; } //для получения текущего значения K
-        private static char[,] Buf; //буфер - показ считываемоего слова в виде матрицы
-        private static bool isChanged = false; //флаг для проверки на наличие хоть чего либо в Buf
-        public static char[,] DisplayBuf() //отображение буфера
+        private int key; //для получения текущего значения K
+        private string input; //текст
+
+        public string Key
+        {
+            get {
+                return key.ToString();
+            }
+            set{
+                try
+                {
+                int.TryParse(value,out key);
+                }
+                catch (Exception en)
+                {
+                    Console.WriteLine("value need to be integer\n"+en.Message);
+                    throw;
+                }
+
+            }
+        }
+
+        public string Input
+        {
+            get {
+                return input;
+            }
+            set {
+                input = value;
+            }
+        }
+
+        private char[,] Buf; //буфер - показ считываемоего слова в виде матрицы
+        private bool isChanged = false; //флаг для проверки на наличие хоть чего либо в Buf
+        
+        public Railway(int key)
+        {
+            this.key = key;
+        }
+
+        public Railway(string text,int key)
+        {
+            this.key = key;
+            this.input = text;
+        }
+
+        public char[,] DisplayBuf() //отображение буфера
         {
             if(isChanged)
             for (int i = 0; i < Buf.GetLength(0); i++)
@@ -26,21 +70,32 @@ namespace EncryptionLib
             }
             return Buf;
         }
+        public string Encode()
+        {
+            if (!String.IsNullOrEmpty(input))
+                return Encode(input);
+            else throw new Exception("Default text is empty");
+        }
+        public string Decode()
+        {
+            if (!String.IsNullOrEmpty(input))
+                return Decode(input);
+            else throw new Exception("Default text is empty");
+        }
+
         /// <summary>
         /// зашифровать
         /// </summary>
-        /// <param name="k"> ключ </param>
-        /// <param name="input"> текст для шифрования</param>
+        /// <param name="text"> текст для шифрования</param>
         /// <returns></returns>
-        public static string Encode(int k, string input) 
+        public string Encode(string text) 
         {
             isChanged = true;
-            K = k;
 
-            int length = input.Length;
-            char[,] buf = new char[k, length];
+            int length = text.Length;
+            char[,] buf = new char[key, length];
             //заполняем буфер звездами
-            for (int i = 0; i < k; i++)
+            for (int i = 0; i < key; i++)
             {
                 for (int j = 0; j < length; j++)
                 {
@@ -54,14 +109,14 @@ namespace EncryptionLib
             //выстраиваем слово по принципу рельс
             while (column < length)
             {
-                buf[row, column] = input[column];
-                if (row == k-1) changer = -1; else if(row == 0) changer = 1;
+                buf[row, column] = text[column];
+                if (row == key-1) changer = -1; else if(row == 0) changer = 1;
                 row += changer;
                 column++;
             }
             //считываем по строкам слева направо
             string result = "";
-            for (int i = 0; i < k; i++)
+            for (int i = 0; i < key; i++)
             {
                 for (int j = 0; j < length; j++)
                 {
@@ -74,18 +129,16 @@ namespace EncryptionLib
         /// <summary>
         /// расшифровать
         /// </summary>
-        /// <param name="k"> ключ </param>
-        /// <param name="input"> текст для расшифрования</param>
+        /// <param name="text"> текст для расшифрования</param>
         /// <returns></returns>
-        public static string Decode(int k, string input)
+        public string Decode(string text)
         {
             isChanged = true;
-            K = k;
 
-            int length = input.Length;
-            char[,] buf = new char[k, length];
+            int length = text.Length;
+            char[,] buf = new char[key, length];
             //заполняем буфер звездами
-            for (int i = 0; i < k; i++)
+            for (int i = 0; i < key; i++)
             {
                 for (int j = 0; j < length; j++)
                 {
@@ -101,20 +154,20 @@ namespace EncryptionLib
             {
                 buf[row, column] = '?';
                 if (row == 0) changer = 1;
-                else if (row == k - 1) changer = -1;
+                else if (row == key - 1) changer = -1;
                 row += changer;
                 column++;
             }
 
             //вместо вопросов построчно записываем шифрослово
             int count = 0;
-            for (int i = 0; i < k; i++)
+            for (int i = 0; i < key; i++)
             {
                 for (int j = 0; j < length; j++)
                 {
                     if (buf[i, j] == '?')
                     {
-                        buf[i, j] = input[count]; 
+                        buf[i, j] = text[count]; 
                         count++;
                     }
                 }
@@ -129,7 +182,7 @@ namespace EncryptionLib
             {
                 result += buf[row, column];
                 if (row == 0) changer = 1;
-                else if (row == k - 1) changer = -1;
+                else if (row == key - 1) changer = -1;
                 row += changer;
                 column++;
             }

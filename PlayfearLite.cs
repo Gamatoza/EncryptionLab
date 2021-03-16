@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EncryptionLib
 {
-    public class PlayfearLite
+    public class PlayfearLite:ICryptoBasic
     {
         private static char[,] keymap =
         {
@@ -15,6 +15,32 @@ namespace EncryptionLib
             { 'U','V','W','X','Z' } };
         private const int ROWS = 5;//keymap.GetLength(0);
         private const int COLUMNS = 5;// keymap.GetLength(1);
+
+
+
+        public string Key
+        {
+            get {
+                string res = "";
+                for (int i = 0; i < keymap.GetLength(0); i++)
+                {
+                    for (int j = 0; j < keymap.GetLength(1); j++)
+                    {
+                        res += keymap[i, j] + " ";
+                    }
+                    res += "\n";
+                }
+                return res;
+            }
+            set { }
+        }
+        string text;
+        public string Input { get => text; set => text = value; }
+
+        public PlayfearLite(string text)
+        {
+            this.text = text;
+        }
 
         private List<char[]> StringToBigramms(string text)
         {
@@ -57,20 +83,29 @@ namespace EncryptionLib
             return new pair(-1, -1);
         }
 
+        /// <summary>
+        /// convert text type like = "ddss" into "dxdsxs"
+        /// </summary>
+        /// <param name="str">input text</param>
+        /// <returns>text without consecutive letters</returns>
         private string Rule5(string str) //no consecutive letters
         {
+
             StringBuilder strb = new StringBuilder(str);
             for (int i = 0; i < strb.Length - 1; i++)
             {
                 if (strb[i] == strb[i + 1])
                 {
-                    strb.Insert(i + 1, 'X');
+                    if (str[i] == 'X')
+                        strb.Insert(i + 1, 'Q');
+                    else
+                        strb.Insert(i + 1, 'X');
                 }
             }
             return strb.ToString();
         }
 
-        public string Encode(string text)
+        public string Encode()
         {
             text = Rule5(text.Replace(" ","").Trim().ToUpper());
             List<char[]> bigramms = StringToBigramms(text);
@@ -102,7 +137,7 @@ namespace EncryptionLib
             return BigrammsToString(bigramms);
         }
 
-        public string Decode(string text)
+        public string Decode()
         {
 
             text = Rule5(text.Replace(" ", "").Trim().ToUpper());

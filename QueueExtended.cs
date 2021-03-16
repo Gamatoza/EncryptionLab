@@ -9,6 +9,7 @@ namespace EncryptionLib
     /// а так же конвертить их в строку по вомзожности
     /// </summary>
     /// <typeparam name="T">IComparable included</typeparam>
+    [Serializable]
     public class QueueExtended<T> where T:IComparable
     {
         public static List<T> arr { get; set; }

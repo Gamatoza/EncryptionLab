@@ -6,16 +6,17 @@ namespace EncryptionLib
 {
     
     // Шифр виженера
-    public class Vjneer // Vigenere Cipher
+    [Serializable]
+    public class Vjneer:ICryptoBasic // Vigenere Cipher
     {
-        private static char[] fullalpha_en = {
+        private char[] fullalpha_en = {
             'A','B','C','D','E','F',
             'G','H','I','J','K','L',
             'M','N','O','P','Q','R',//' ',
             'S','T', 'U','V','W','X',
             'Y','Z'};//"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        private static char[] fullalpha_ru = new char[] {
+        private char[] fullalpha_ru = new char[] {
             'А' , 'Б' , 'В' , 'Г' , 'Д' ,
             'Е' , 'Ё' , 'Ж' , 'З' , 'И' ,
             'Й' , 'К' , 'Л' , 'М' , 'Н' ,
@@ -30,12 +31,11 @@ namespace EncryptionLib
             '!','?',',','/','\\','\'','"'
         };*/
 
-        private static char[] alphabet_array = (char[])fullalpha_en.Clone(); //Main array for ecripting //Default on EN
-
+        private char[] alphabet_array; //Main array for ecripting //Default on EN
 
         //Ключ для улучшенной версии Виженера
-        private static char[,] progressivekey;
-        public static char[,] PrograssiveKey {
+        private char[,] progressivekey;
+        public char[,] PrograssiveKey {
             get{
                 if (progressivekey != null)
                     return progressivekey;
@@ -44,7 +44,7 @@ namespace EncryptionLib
         }
 
         //заполнение ключа согласно установленному алфавиту
-        private static void FillProgressiveKey()
+        private void FillProgressiveKey()
         {
             progressivekey = new char[N, N];
 
@@ -62,7 +62,7 @@ namespace EncryptionLib
         }
 
         //Мощность алфовита (не включает спец символы (test 0.1))
-        public static int N
+        public int N
         {
             get {
                 return alphabet_array.Length;
@@ -79,8 +79,8 @@ namespace EncryptionLib
         }*/
         //TODO: связку с XOR что бы можно было добавлять еще и спец символы, как это делали в плюсах через |, ну ты понял
 
-        private static Language language = Language.EN;
-        public static Language LanguageChooser { get { return language; }
+        private Language language = Language.EN;
+        public Language LanguageChooser { get { return language; }
             set {
                 switch (value)
                 {
@@ -104,13 +104,74 @@ namespace EncryptionLib
             }
         }
 
-        static Vjneer() {
-            FillProgressiveKey(); 
+        private string key;
+        private string input;
+
+        public string Key {
+            get{
+                string res = "\t";
+
+                for (int i = 0,j = 0 ; i < progressivekey.GetLength(0); i++,j++)
+                {
+                    res += j + " ";
+                    if (j >= 9) j = 0;
+                }
+                res += '\n';
+                for (int i = 0; i < progressivekey.GetLength(0); i++)
+                {
+                    res += i + ":\t";
+                    for (int j = 0; j < progressivekey.GetLength(1); j++)
+                    {
+                        res += progressivekey[i, j] + " ";
+                    }
+                    res += "\n";
+                }
+                return res;
+            }
+            set { key = value; }
         }
 
+        public string Input {
+            get => input;
+            set => input = value; }
+
+        public Vjneer(string text,Language lang)
+        {
+            LanguageChooser = lang;
+            input = text;
+        }
+
+        public Vjneer(string text, string key, Language lang) : this(text, lang)
+        {
+            this.key = key;
+        }
 
         //Classic Formula encript: ci = (pi + ki) mod N;
         //Where: ci - code simbol, pi - input simbol, ki - key simbol, N - power of alphabet (count of simpols in aplhabet)
+
+        #region ICryptoBasic EDcoding
+        public string Encode()
+        {
+            if (!String.IsNullOrEmpty(input))
+            {
+                if (String.IsNullOrEmpty(key))
+                    return EncodeProgressiveKey(input);
+                else return EncodeProgressiveKey(input, key);
+            }
+            else throw new Exception("Default text is empty");
+        }
+        public string Decode()
+        {
+
+            if (!String.IsNullOrEmpty(input))
+            {
+                if (String.IsNullOrEmpty(key))
+                    return DecodeProgressiveKey(input);
+                else return DecodeProgressiveKey(input, key);
+            }
+            else throw new Exception("Default text is empty");
+        }
+        #endregion
 
         #region Default Vijener Encoding
         /// <summary>
@@ -119,7 +180,7 @@ namespace EncryptionLib
         /// <param name="input"> input text</param>
         /// <param name="key"> keyword </param>
         /// <returns>cipertext</returns>
-        public static string Encode(string input, string key_word)
+        public string Encode(string input, string key_word)
         {
             input = input.ToUpper();
             key_word = key_word.ToUpper();
@@ -158,7 +219,7 @@ namespace EncryptionLib
         /// <param name="input"> input text</param>
         /// <param name="key_word"> keyword </param>
         /// <returns>source text</returns>
-        public static string Decode(string input, string key_word)
+        public string Decode(string input, string key_word)
         {
             input = input.ToUpper();
             key_word = key_word.ToUpper();
@@ -193,7 +254,7 @@ namespace EncryptionLib
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static string EncodePrograssiveKey(string input)
+        public string EncodeProgressiveKey(string input)
         {
             input = input.ToUpper();
 
@@ -207,12 +268,12 @@ namespace EncryptionLib
                 index = Array.IndexOf(alphabet_array, input[i]);
                 if (index == -1) result += input[i]; //ignorring if is not our alphabet
                 else
-                    result += progressivekey[level, index];
+                    result += progressivekey[index, level + 1];
             }
 
             return result;
         }
-        public static string DecodePrograssiveKey(string input)
+        public string DecodeProgressiveKey(string input)
         {
             input = input.ToUpper();
 
@@ -226,7 +287,7 @@ namespace EncryptionLib
                 index = Array.IndexOf(alphabet_array, input[i]);
                 if (index == -1) result += input[i]; //ignorring if is not our alphabet
                 else
-                    result += progressivekey[index, level];
+                    result += progressivekey[index, N - 1 - level];
             }
 
             return result;
@@ -239,7 +300,7 @@ namespace EncryptionLib
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static string EncodePrograssiveKey(string input, string key)
+        public string EncodeProgressiveKey(string input, string key)
         {
             input = input.ToUpper();
             key = Helper.PrepareKey__Fill(key, input.Length).ToUpper();
@@ -259,7 +320,7 @@ namespace EncryptionLib
 
             return result;
         }
-        public static string DecodePrograssiveKey(string input, string key)
+        public string DecodeProgressiveKey(string input, string key)
         {
             input = input.ToUpper();
             key = Helper.PrepareKey__Fill(key, input.Length).ToUpper();
@@ -273,9 +334,7 @@ namespace EncryptionLib
                 index = Array.IndexOf(alphabet_array, input[i]);
                 if (index == -1) result += input[i]; //ignorring if is not our alphabet
                 else 
-                {
                     result += progressivekey[index,N - 1 - level];
-                }
             }
 
             return result;
@@ -292,7 +351,7 @@ namespace EncryptionLib
         /// <param name="length">key length</param>
         /// <param name="startSeed"> start random num point, (generated key, specially designed for identical beaks)</param>
         /// <returns> Gammir encript</returns>
-        public static string Generate_XORCode(int length, int startSeed)
+        public string Generate_XORCode(int length, int startSeed)
         {
             Random rand = new Random(startSeed);
 
