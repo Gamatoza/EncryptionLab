@@ -251,7 +251,7 @@ namespace EncryptionLib
             return result;
         }
         #endregion
-        #region Vijener Encoding with Generated key (Tritemius progressive key)
+        #region Vijener Encoding with Generated key
         /// <summary>
         /// Encode by using a Progressive generated key (Tritemius progressive key)
         /// </summary>
@@ -262,6 +262,7 @@ namespace EncryptionLib
             input = input.ToUpper();
 
             string result = "";
+            string huita = "";
             int length = input.Length;
             int index,level = 0;
             for (int i = 0; i < length; i++)
@@ -297,7 +298,7 @@ namespace EncryptionLib
         }
 
         #endregion
-        #region Vijener Encoding with User key (Tritemius progressive key)
+        #region Vijener Encoding with User key
         /// <summary>
         /// Encode by using a Progressive generated key (Tritemius progressive key)
         /// </summary>

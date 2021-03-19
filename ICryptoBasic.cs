@@ -39,8 +39,7 @@ namespace EncryptionLib
                 //Console.WriteLine("Объект десериализован");
             }
         }
-
-
+        
         // запись в файл для сохранения данных
         public static void WriteFileData(this ICryptoBasic obj, string path)
         {

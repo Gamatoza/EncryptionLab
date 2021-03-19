@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "..\Test\Cons
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "..\UnitTestProject\UnitTestProject.csproj", "{271710DB-CF9E-4B0B-AAD2-0AEBFDB083C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFApp", "..\WFApp\WFApp.csproj", "{6502C622-2AB7-412C-BB4A-9B9F727EDDE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{271710DB-CF9E-4B0B-AAD2-0AEBFDB083C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{271710DB-CF9E-4B0B-AAD2-0AEBFDB083C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{271710DB-CF9E-4B0B-AAD2-0AEBFDB083C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6502C622-2AB7-412C-BB4A-9B9F727EDDE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6502C622-2AB7-412C-BB4A-9B9F727EDDE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6502C622-2AB7-412C-BB4A-9B9F727EDDE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6502C622-2AB7-412C-BB4A-9B9F727EDDE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

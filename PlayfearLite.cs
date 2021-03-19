@@ -71,6 +71,7 @@ namespace EncryptionLib
             public int i;
             public int j;
             public pair(int i, int j) { this.i = i; this.j = j; }
+            public bool isFound() { return i != -1 && j != -1; }
         }
 
         private pair ReturnIndex(char simbol)
@@ -118,24 +119,27 @@ namespace EncryptionLib
             {
                 pair first = ReturnIndex(bigramms[i][0]);
                 pair second = ReturnIndex(bigramms[i][1]);
-                if (first.i == second.i)
+                if (first.isFound() && second.isFound())
                 {
-                    int row = first.i + 1 > ROWS ? 0 : first.i + 1; //right
-                    bigramms[i][0] = keymap[row, first.j];
-                    row = second.i + 1 > ROWS ? 0 : second.i + 1;
-                    bigramms[i][0] = keymap[row, second.j];
-                }
-                else if(first.j == second.j)
-                {
-                    int column = first.j + 1 > COLUMNS ? 0 : first.j + 1; //down
-                    bigramms[i][0] = keymap[first.i, column];
-                    column = second.j + 1 > COLUMNS ? 0 : second.j + 1;
-                    bigramms[i][0] = keymap[second.i, column];
-                }
-                else
-                {
-                    bigramms[i][0] = keymap[second.i, first.j];
-                    bigramms[i][1] = keymap[first.i, second.j];
+                    if (first.i == second.i)
+                    {
+                        int row = first.i + 1 >= ROWS ? 0 : first.i + 1; //right
+                        bigramms[i][0] = keymap[row, first.j];
+                        row = second.i + 1 >= ROWS ? 0 : second.i + 1;
+                        bigramms[i][1] = keymap[row, second.j];
+                    }
+                    else if (first.j == second.j)
+                    {
+                        int column = first.j + 1 >= COLUMNS ? 0 : first.j + 1; //down
+                        bigramms[i][0] = keymap[first.i, column];
+                        column = second.j + 1 >= COLUMNS ? 0 : second.j + 1;
+                        bigramms[i][1] = keymap[second.i, column];
+                    }
+                    else
+                    {
+                        bigramms[i][0] = keymap[second.i, first.j];
+                        bigramms[i][1] = keymap[first.i, second.j];
+                    }
                 }
             }
 
@@ -151,24 +155,27 @@ namespace EncryptionLib
             {
                 pair first = ReturnIndex(bigramms[i][0]);
                 pair second = ReturnIndex(bigramms[i][1]);
-                if (first.i == second.i)
+                if (first.isFound() && second.isFound())
                 {
-                    int row = first.i - 1 < 0 ? ROWS : first.i - 1; //left
-                    bigramms[i][0] = keymap[row, first.j];
-                    row = second.i - 1 < 0 ? ROWS : second.i - 1;
-                    bigramms[i][0] = keymap[row, second.j];
-                }
-                else if (first.j == second.j)
-                {
-                    int column = first.j - 1 < 0 ? COLUMNS : first.j - 1; //up
-                    bigramms[i][0] = keymap[first.i, column];
-                    column = second.j - 1 < 0 ? COLUMNS : second.j - 1;
-                    bigramms[i][0] = keymap[second.i, column];
-                }
-                else
-                {
-                    bigramms[i][0] = keymap[second.i, first.j];
-                    bigramms[i][1] = keymap[first.i, second.j];
+                    if (first.i == second.i)
+                    {
+                        int row = first.i - 1 < 0 ? ROWS : first.i - 1; //left
+                        bigramms[i][0] = keymap[row, first.j];
+                        row = second.i - 1 < 0 ? ROWS : second.i - 1;
+                        bigramms[i][1] = keymap[row, second.j];
+                    }
+                    else if (first.j == second.j)
+                    {
+                        int column = first.j - 1 < 0 ? COLUMNS : first.j - 1; //up
+                        bigramms[i][0] = keymap[first.i, column];
+                        column = second.j - 1 < 0 ? COLUMNS : second.j - 1;
+                        bigramms[i][1] = keymap[second.i, column];
+                    }
+                    else
+                    {
+                        bigramms[i][0] = keymap[second.i, first.j];
+                        bigramms[i][1] = keymap[first.i, second.j];
+                    }
                 }
             }
 
