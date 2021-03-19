@@ -135,6 +135,9 @@ namespace EncryptionLib
             get => input;
             set => input = value; }
 
+        private string extra = "";
+        public string Extra { get { return extra; } }
+
         public Vjneer(string text,Language lang)
         {
             LanguageChooser = lang;

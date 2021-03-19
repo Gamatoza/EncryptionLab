@@ -44,6 +44,23 @@ namespace EncryptionLib
         }
 
         private char[,] Buf; //буфер - показ считываемоего слова в виде матрицы
+
+        public string Extra {
+            get 
+            {
+                string ret = "";
+                for (int i = 0; i < Buf.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Buf.GetLength(1); j++)
+                    {
+                        ret += Buf[i,j];
+                    }
+                    ret += "\n";
+                }
+                return ret;
+            }
+        }
+
         private bool isChanged = false; //флаг для проверки на наличие хоть чего либо в Buf
         
         public Railway(int key)

@@ -4,7 +4,8 @@ using System.Text;
 
 namespace EncryptionLib
 {
-    public class PlayfearLite:ICryptoBasic
+    [Serializable]
+    public class PlayfearLite: ICryptoBasic  //Playfair Cipher
     {
         private static char[,] keymap =
         {
@@ -15,8 +16,7 @@ namespace EncryptionLib
             { 'U','V','W','X','Z' } };
         private const int ROWS = 5;//keymap.GetLength(0);
         private const int COLUMNS = 5;// keymap.GetLength(1);
-
-
+        
 
         public string Key
         {
@@ -36,6 +36,8 @@ namespace EncryptionLib
         }
         string text;
         public string Input { get => text; set => text = value; }
+        private string extra = "";
+        public string Extra { get { return extra; } }
 
         public PlayfearLite(string text)
         {
@@ -104,7 +106,10 @@ namespace EncryptionLib
             }
             return strb.ToString();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string Encode()
         {
             text = Rule5(text.Replace(" ","").Trim().ToUpper());

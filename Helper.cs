@@ -5,19 +5,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace EncryptionLib
 {
-    //TODO: Класс для сериализации
-    //TODO: Класс для сохранения и выгрузки из файла просто текста
-    //  TODO: Интерфейс реализуемый классами шифрования, для сохранения и выгрузки определенным типом
     //TODO: Преобразование в DataGridWiew 
-    //TODO: Удаление символов не Русского/Английского алфовита
     //  TODO: Интерфейс для преобразования каждого в пкаждом (в разных можно будет не удалять а изменять на * к примеру)
-    //TODO: 
-    //
-    //
-    //
-    //
-
-    public static class Helper
+    
+    public class Helper
     {
 
         public static string Reverse(string s)
@@ -40,14 +31,7 @@ namespace EncryptionLib
             }
             else throw new DivideByZeroException("key is null");
         }
-
-        public static void WriteFileText(string text)
-        {
-            
-        }
-        public static void ReadFile(string text)
-        {
-
-        }
+        
     }
+    
 }
