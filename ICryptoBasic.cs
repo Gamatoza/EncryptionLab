@@ -45,12 +45,13 @@ namespace EncryptionLib
         {
             using (FileStream fstream = new FileStream($"{path}", FileMode.OpenOrCreate))
             {
+                string input = obj.Input;
                 string enc = obj.Encode();
                 obj.Input = enc;
                 string dec = obj.Decode();
                 Console.Read();
                 // преобразуем строку в байты
-                byte[] array = System.Text.Encoding.Default.GetBytes(obj.Input + ";" + obj.Key + ";" + enc + ";" + dec);
+                byte[] array = System.Text.Encoding.Default.GetBytes(input + ";" + obj.Key + ";\n" + enc + " -> " + dec);
                 // запись массива байтов в файл
                 fstream.Write(array, 0, array.Length);
             }
