@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\_Educate\\Visual\\EcnryptionLib\\EncryptionLib.csproj": {}
+    "D:\\_Educate\\Visual\\EncryptionLab\\EncryptionLib.csproj": {}
   },
   "projects": {
-    "D:\\_Educate\\Visual\\EcnryptionLib\\EncryptionLib.csproj": {
+    "D:\\_Educate\\Visual\\EncryptionLab\\EncryptionLib.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\_Educate\\Visual\\EcnryptionLib\\EncryptionLib.csproj",
+        "projectUniqueName": "D:\\_Educate\\Visual\\EncryptionLab\\EncryptionLib.csproj",
         "projectName": "EncryptionLib",
-        "projectPath": "D:\\_Educate\\Visual\\EcnryptionLib\\EncryptionLib.csproj",
+        "projectPath": "D:\\_Educate\\Visual\\EncryptionLab\\EncryptionLib.csproj",
         "packagesPath": "C:\\Users\\tihon\\.nuget\\packages\\",
-        "outputPath": "D:\\_Educate\\Visual\\EcnryptionLib\\obj\\",
+        "outputPath": "D:\\_Educate\\Visual\\EncryptionLab\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\tihon\\AppData\\Roaming\\NuGet\\NuGet.Config",

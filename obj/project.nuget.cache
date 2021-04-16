@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jLnTsyzNzCtM+6FiNZiuNZ77AxcsmM6hVkFAUAKFHtlRybXSLTBXVnNQWZZO3YZaQnMbrdtUrK7VgHl4OPQ6Hg==",
+  "dgSpecHash": "T4aI8Qo+MrY9n2MIEMnu7q8tvSVnNASm5bkozqnYC+ITaMeDR+x++t+ZhcYvIxHU1D8qpfSnhDqtyiG0hZjmhQ==",
   "success": true,
-  "projectFilePath": "D:\\_Educate\\Visual\\EcnryptionLib\\EncryptionLib.csproj",
+  "projectFilePath": "D:\\_Educate\\Visual\\EncryptionLab\\EncryptionLib.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\tihon\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\tihon\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
