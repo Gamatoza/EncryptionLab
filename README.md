@@ -1,4 +1,4 @@
-# EncryptionLab
+# EncryptionLib
 Encription lib for lab
 .NET 7.1 used
 
