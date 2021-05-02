@@ -7,3 +7,5 @@ D:\_Educate\Visual\EncryptionLab\bin\Debug\netstandard2.1\EncryptionLib.dll
 D:\_Educate\Visual\EncryptionLab\bin\Debug\netstandard2.1\EncryptionLib.pdb
 D:\_Educate\Visual\EncryptionLab\obj\Debug\netstandard2.1\EncryptionLib.dll
 D:\_Educate\Visual\EncryptionLab\obj\Debug\netstandard2.1\EncryptionLib.pdb
+D:\_Educate\Visual\EncryptionLab\bin\Debug\netstandard2.1\text.txt
+D:\_Educate\Visual\EncryptionLab\bin\Debug\netstandard2.1\test.bmp

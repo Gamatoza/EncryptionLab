@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace EncryptionLib
+namespace EncryptionLib.Help
 {
     //TODO: Преобразование в DataGridWiew 
     //  TODO: Интерфейс для преобразования каждого в пкаждом (в разных можно будет не удалять а изменять на * к примеру)
 
     //TODO: Добавить метод ля проверки на наличие чисел и символов того или иного языка
-    public class Helper
+    public static class Helper
     {
 
-        public static string Reverse(string s)
+        public static string Reverse(this string s)
         {
             char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);
@@ -59,6 +60,20 @@ namespace EncryptionLib
                 throw;
             }
         }
+
+        //режет строку на куски по num символов
+        //TODO,добавить параметр переноса строк, типа, bool isExtended, который учитывает \n и все такое
+        public static string[] Slice(this string obj,int num)
+        {
+            List<string> buf = new List<string>();
+            for (int i = 0; i < obj.Length; i+=num)
+            {
+                buf.Add(obj.Substring(i, i + num));
+            }
+            return buf.ToArray();
+        }
+
+
 
     }
     
