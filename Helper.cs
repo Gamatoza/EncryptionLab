@@ -13,13 +13,6 @@ namespace EncryptionLib.Help
     public static class Helper
     {
 
-        public static string Reverse(this string s)
-        {
-            char[] charArray = s.ToCharArray();
-            Array.Reverse(charArray);
-            return new string(charArray);
-        }
-
         public static string PrepareKey__Fill(string key, int length)
         {
             if (key.Length != 0)
@@ -73,7 +66,12 @@ namespace EncryptionLib.Help
             return buf.ToArray();
         }
 
-
+        public static string Reverse(this string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
 
     }
     
