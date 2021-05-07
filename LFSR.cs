@@ -10,6 +10,24 @@ namespace EncryptionLib.LFSR
     {
         public int bufkey { get; set; }             // Копия ключа, используется как не стартовое значение ключа
 
+        public string Text
+        {
+            get {
+                string buf = "";
+                foreach (var item in text)
+                {
+                    if (item != 0)
+                        buf += (char)item;
+                    else break;
+                }
+                return buf;
+            }
+
+            set {
+                text = TextIntoBites(value);
+            }
+        }
+
         public byte[] text { get; private set; }    // Преобразовочный/Преобразованный текст
         public byte[] exKey { get; private set; }   // Расширенный ключ до размеров текста
         byte[] args;                                // Аргументы функции
@@ -115,13 +133,27 @@ namespace EncryptionLib.LFSR
         public byte iExKey { get; private set; }
         public byte iText { get; private set; }
 
-        public void Step()
+        public void StepNext()
         {
             if (!isStepByStep) throw new Exception("Step by step mod isn't enable");
             iText = text[iIndex] ^= exKey[iIndex];
             if (++iIndex == iMax) { isStepByStep = false; return; }
             iExKey = exKey[iIndex] = (byte)xns(ref iKey, iMask);
-            
+        }
+
+        public void StepPrev() //не знаю зачем
+        {
+
+        }
+
+        public void Finish()
+        {
+            while (isStepByStep && ++iIndex < iMax)
+            {
+                iText = text[iIndex] ^= exKey[iIndex];
+                iExKey = exKey[iIndex] = (byte)xns(ref iKey, iMask);
+            }
+            isStepByStep = false;
         }
 
         /// <summary>
