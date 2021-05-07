@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 using EncryptionLib.Help;
 namespace EncryptionLib.LFSR
 {
+    /// <summary>
+    /// Регистр сдвига с линейной обратной связью 
+    /// (РСЛОС, англ. linear feedback shift register, LFSR) — сдвиговый регистр битовых слов, у которого значение входного (вдвигаемого) бита равно линейной булевой функции от значений остальных битов регистра до сдвига.
+    /// </summary>
     public class LFSR
     {
+        #region Main Getters Setters
         public int bufkey { get; set; } = -1;           // Копия ключа, используется как не стартовое значение ключа
 
         public string Text
@@ -17,7 +22,7 @@ namespace EncryptionLib.LFSR
                 foreach (var item in text)
                 {
                     if (item != 0)
-                        buf += (char)item;
+                        buf += Convert.ToString(item,2);
                     else break;
                 }
                 return buf;
@@ -28,11 +33,15 @@ namespace EncryptionLib.LFSR
             }
         }
 
+        public string FullKey => String.Join("", exKey.Select(i => Convert.ToString(i, 2)));
+
+        public string LastKey => Convert.ToString(exKey.Last(), 2);
+
         public byte[] text { get; private set; }    // Преобразовочный/Преобразованный текст
         public byte[] exKey { get; private set; }   // Расширенный ключ до размеров текста
         byte[] args;                                // Аргументы функции
-
-        //Хелперы
+        #endregion
+        #region Helpers
         //Преобразуют файл или текст в массив битов
         Byte[] FileIntoBites(string path)
             => System.IO.File.ReadAllBytes(@"" + path);
@@ -45,11 +54,8 @@ namespace EncryptionLib.LFSR
             .Split('+') //сплитим по плюсам
             .Select(i => Convert.ToByte(i.Split('^').Last())) //сплитим по степеням и переводим в число
             .OrderByDescending(i => i).ToArray(); //ордерим по большему для быстрого нахождения максимального
-
-
-
-
-        //конструкторы
+        #endregion
+        #region Constructors
         /// <summary>
         /// Пустой конструктор
         /// Постепенное заполнение
@@ -106,6 +112,8 @@ namespace EncryptionLib.LFSR
             this.args = ParseFormula(formula);
         }
 
+        #endregion
+        #region Getters Setters for Null Constructor
         bool isAllCheck() => text != null && bufkey != -1 && exKey != null && args != null;
 
         public void SetText(byte[] text) { this.text = text; exKey = new byte[text.Length]; }
@@ -113,8 +121,8 @@ namespace EncryptionLib.LFSR
         public void SetKey(int key) { bufkey = key; }
         public void SetArgs(string formula) { args = ParseFormula(formula); }
         public void SetArgs(params byte[] args) { this.args = args; }
-
-
+        #endregion
+        #region Main functions
         /// <summary>
         /// Основная функция преобразования
         /// </summary>
@@ -141,12 +149,96 @@ namespace EncryptionLib.LFSR
             await Task.Run(() => Transmute());
         }
 
+        #endregion
+        #region StepByStep mod
 
-        //StepByStep mod
-        
-        public Dictionary<byte, byte> AllSteps;
 
+        List<BAR<byte>> AllSteps;
+
+        BAR<byte> pointer;
+        int index = 0;
+        bool StepByStep = false;
+
+        public async void TransmuteStepByStepAsync()
+        {
+            StepByStep = true;
+            AllSteps = new List<BAR<byte>>();
+            if (!isAllCheck()) throw new Exception("no");
+            int key = bufkey;
+            byte mask = (byte)getMask();                     //можно без переменной сразу передавать в поле маски TODO
+            getHash(key, mask);
+            Step(0);
+            pointer = AllSteps[0];
+            for (int i = 1; i < text.Length; i++)
+            {
+                await Task.Run(() => Step(i));
+                Task.WaitAll();
+            }
+        }
         
+        
+        void Step(int index)
+        {
+            BAR<byte> next = new BAR<byte>();
+            next.Before = text[index];
+            next.After = exKey[index];
+            text[index] ^= exKey[index];
+            next.Result = text[index];
+            AllSteps.Add(next);
+        }
+
+
+        class BAR<T> //Before After Result
+        {
+            public BAR() { }
+
+            public BAR(T before, T after, T result)
+            {
+                this.Before = before;
+                this.After = after;
+                this.Result = result;
+            }
+
+            public T Before { get; set; }
+            public T After { get; set; }
+
+            public T Result { get; set; }
+
+            public override string ToString()
+            {
+                return String.Join(";", Before, After, Result);
+            }
+
+        }
+        public int MoveNext()
+        {
+            if (!StepByStep) return 1;//throw new Exception("Step by step not started");
+            if (++index > AllSteps.Count) { --index; return 2; } //throw new Exception("Overflow");
+            if (StepsCount < index) Task.WaitAll();
+            if (StepsCount < index) return 0; //It's all over
+            pointer = AllSteps[index];
+            return 0;
+        }
+        public int MovePrev()
+        {
+            if (!StepByStep) return 1;//throw new Exception("Step by step not started");
+            if (--index < 0) { ++index; return 2; } //throw new Exception("Went Abroad");
+            if (StepsCount < index) Task.WaitAll();
+            if (StepsCount < index) return 0; //It's all over
+            pointer = AllSteps[index];
+            return 0;
+        }
+        
+        public int CurrentIndex => index;
+        public byte? GetAfter => pointer.After;
+        public byte? GetBefore => pointer.Before;
+        public byte? GetResult => pointer.Result;
+
+        public string GetStep => pointer.ToString();
+        public int? StepsCount => AllSteps.Count;
+
+        #endregion
+        #region Additional
 
         /// <summary>
         /// Получение хеша функции
@@ -225,6 +317,8 @@ namespace EncryptionLib.LFSR
             x |= x >> 16;
             return  x - (x >> 1);
         }
+
+        #endregion
 
     }
 }

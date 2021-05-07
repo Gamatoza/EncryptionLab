@@ -36,3 +36,5 @@ D:\Educate\code2\EncryptionLib\obj\Debug\netstandard2.0\EncryptionLib.dll
 D:\Educate\code2\EncryptionLib\obj\Debug\netstandard2.0\EncryptionLib.pdb
 D:\Educate\code2\EncryptionLib\bin\Debug\netstandard2.0\test.bmp
 D:\Educate\code2\EncryptionLib\bin\Debug\netstandard2.0\text.txt
+D:\_Educate\Visual\EncryptionLab\bin\Debug\netstandard2.0\test.bmp
+D:\_Educate\Visual\EncryptionLab\bin\Debug\netstandard2.0\text.txt
