@@ -146,57 +146,7 @@ namespace EncryptionLib.LFSR
         
         public Dictionary<byte, byte> AllSteps;
 
-        /// <summary>
-        /// Вызов Transmute в режиме Step by Step, что бы можно было отслеживать изменение всего
-        /// </summary>
-        public void StartStapByStapTransmute()
-        {
-            if (!isAllCheck()) throw new Exception("no");
-            isStepByStep = true;
-            iKey = bufkey;
-            iMask = (byte)getMask();
-            iMax = text.Length;
-            iIndex = 0;
-            exKey[0] = (byte)iKey;
-            AllSteps.Add(text[0], exKey[0]);
-        }
-
-
-        //intermidate
-
-
-        public bool isStepByStep { get; private set; }                          // Проверка на работу в режиме step-by-step функции Transmute
-
-        int iIndex;
-        byte iMask;
-        int iKey;
-        int iMax;
-
-        public byte iExKey { get; private set; }
-        public byte iText { get; private set; }
-
-        public void StepNext()
-        {
-            if (!isStepByStep) throw new Exception("Step by step mod isn't enable");
-            iText = text[iIndex] ^= exKey[iIndex];
-            if (++iIndex == iMax) { isStepByStep = false; return; }
-            iExKey = exKey[iIndex] = (byte)xns(ref iKey, iMask);
-        }
-
-        public void StepPrev() //не знаю зачем
-        {
-
-        }
-
-        public void Finish()
-        {
-            while (isStepByStep && ++iIndex < iMax)
-            {
-                iText = text[iIndex] ^= exKey[iIndex];
-                iExKey = exKey[iIndex] = (byte)xns(ref iKey, iMask);
-            }
-            isStepByStep = false;
-        }
+        
 
         /// <summary>
         /// Получение хеша функции
