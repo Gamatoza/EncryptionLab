@@ -8,7 +8,7 @@ namespace EncryptionLib.LFSR
 {
     public class LFSR
     {
-        public int bufkey { get; set; }             // Копия ключа, используется как не стартовое значение ключа
+        public int bufkey { get; set; } = -1;           // Копия ключа, используется как не стартовое значение ключа
 
         public string Text
         {
@@ -39,13 +39,22 @@ namespace EncryptionLib.LFSR
         Byte[] TextIntoBites(string text)
             => System.Text.Encoding.Default.GetBytes(text);
 
-        //Функция преобразования формулы в аргументы (в разработке)
-        void ParseFormula() { }         // преобразует строковую формулу в номера
+        //Функция преобразования формулы в аргументы // формат входной строки: x^10 + x^5 + x^1
+        byte[] ParseFormula(string formula) =>// преобразует строковую формулу в номера
+              formula.ToLower() //все в нижний
+            .Split('+') //сплитим по плюсам
+            .Select(i => Convert.ToByte(i.Split('^').Last())) //сплитим по степеням и переводим в число
+            .OrderByDescending(i => i).ToArray(); //ордерим по большему для быстрого нахождения максимального
 
 
 
 
         //конструкторы
+        /// <summary>
+        /// Пустой конструктор
+        /// Постепенное заполнение
+        /// </summary>
+        public LFSR() { }
 
         /// <summary>
         /// Стандартный конструктор
@@ -76,11 +85,43 @@ namespace EncryptionLib.LFSR
         }
 
         /// <summary>
+        /// Стандартный конструктор с формулой
+        /// </summary>
+        /// <param name="path">путь к файлу</param>
+        /// <param name="key">начальное значение регистра / ключ </param>
+        /// <param name="args">аргументы функции</param>
+        public LFSR(string path, byte key, string formula):this(path,key)
+        {
+            this.args = ParseFormula(formula);
+        }
+
+        /// <summary>
+        /// Дополнительный конструктор с формулой
+        /// </summary>
+        /// <param name="path">путь к файлу</param>
+        /// <param name="key">начальное значение регистра / ключ </param>
+        /// <param name="args">аргументы функции</param>
+        public LFSR(byte[] text, byte key, string formula) : this(text, key)
+        {
+            this.args = ParseFormula(formula);
+        }
+
+        bool isAllCheck() => text != null && bufkey != -1 && exKey != null && args != null;
+
+        public void SetText(byte[] text) { this.text = text; exKey = new byte[text.Length]; }
+        public void SetText(string path) { this.text = FileIntoBites(path); }
+        public void SetKey(int key) { bufkey = key; }
+        public void SetArgs(string formula) { args = ParseFormula(formula); }
+        public void SetArgs(params byte[] args) { this.args = args; }
+
+
+        /// <summary>
         /// Основная функция преобразования
         /// </summary>
         /// <returns>Преобразует переменную text</returns>
         public int Transmute()
         {
+            if (!isAllCheck()) throw new Exception("no");
             int key = bufkey;
             byte mask = (byte)getMask();                     //можно без переменной сразу передавать в поле маски TODO
             getHash(key, mask);
@@ -110,6 +151,7 @@ namespace EncryptionLib.LFSR
         /// </summary>
         public void StartStapByStapTransmute()
         {
+            if (!isAllCheck()) throw new Exception("no");
             isStepByStep = true;
             iKey = bufkey;
             iMask = (byte)getMask();
