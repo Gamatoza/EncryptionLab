@@ -15,6 +15,19 @@ namespace EncryptionLib.LFSR
         #region Main Getters Setters
         public int bufkey { get; set; } = -1;           // Копия ключа, используется как не стартовое значение ключа
 
+        public string TextinBytes
+        {
+            get {
+                string buf = "";
+                foreach (var item in text)
+                {
+                    if (item != 0)
+                        buf += Convert.ToString(item, 2);
+                    else break;
+                }
+                return buf;
+            }
+        }
         public string Text
         {
             get {
@@ -22,7 +35,7 @@ namespace EncryptionLib.LFSR
                 foreach (var item in text)
                 {
                     if (item != 0)
-                        buf += Convert.ToString(item,2);
+                        buf += (char)item;//Convert.ToString(item,2);
                     else break;
                 }
                 return buf;
@@ -37,22 +50,27 @@ namespace EncryptionLib.LFSR
 
         public string LastKey => Convert.ToString(exKey.Last(), 2);
 
-        public byte[] text { get; private set; }    // Преобразовочный/Преобразованный текст
-        public byte[] exKey { get; private set; }   // Расширенный ключ до размеров текста
-        byte[] args;                                // Аргументы функции
+        public int[] text { get; private set; }    // Преобразовочный/Преобразованный текст
+        public byte[] btext { 
+            get {
+                return text.Select(i => (byte)i).ToArray();
+            } }
+        public int[] exKey { get; private set; }   // Расширенный ключ до размеров текста
+        int[] args;                                // Аргументы функции
+        int maxarg;
         #endregion
         #region Helpers
         //Преобразуют файл или текст в массив битов
-        Byte[] FileIntoBites(string path)
-            => System.IO.File.ReadAllBytes(@"" + path);
-        Byte[] TextIntoBites(string text)
-            => System.Text.Encoding.Default.GetBytes(text);
+        int[] FileIntoBites(string path)
+            => System.IO.File.ReadAllBytes(@"" + path).Select(i=>(int)i).ToArray();
+        int[] TextIntoBites(string text)
+            => System.Text.Encoding.Default.GetBytes(text).Select(i => (int)i).ToArray();
 
         //Функция преобразования формулы в аргументы // формат входной строки: x^10 + x^5 + x^1
-        byte[] ParseFormula(string formula) =>// преобразует строковую формулу в номера
+        int[] ParseFormula(string formula) =>// преобразует строковую формулу в номера
               formula.ToLower() //все в нижний
             .Split('+') //сплитим по плюсам
-            .Select(i => Convert.ToByte(i.Split('^').Last())) //сплитим по степеням и переводим в число
+            .Select(i => Convert.ToInt32(i.Split('^').Last())) //сплитим по степеням и переводим в число
             .OrderByDescending(i => i).ToArray(); //ордерим по большему для быстрого нахождения максимального
         #endregion
         #region Constructors
@@ -68,12 +86,13 @@ namespace EncryptionLib.LFSR
         /// <param name="text">текст в байтах</param>
         /// <param name="key">начальное значение регистра / ключ </param>
         /// <param name="args">аргументы функции</param>
-        public LFSR(byte[] text, byte key, params byte[] args)
+        public LFSR(int[] text, int key, params int[] args)
         {
             this.text = text;
             bufkey = key;
             this.args = args;
-            exKey = new byte[text.Length];
+            maxarg = args.Max();
+            exKey = new int[text.Length];
         }
 
         /// <summary>
@@ -82,12 +101,12 @@ namespace EncryptionLib.LFSR
         /// <param name="path">путь к файлу</param>
         /// <param name="key">начальное значение регистра / ключ </param>
         /// <param name="args">аргументы функции</param>
-        public LFSR(string path, byte key, params byte[] args)
+        public LFSR(string path, int key, params int[] args)
         {
             text = FileIntoBites(path);
             bufkey = key;
             this.args = args;
-            exKey = new byte[text.Length];
+            exKey = new int[text.Length];
         }
 
         /// <summary>
@@ -96,7 +115,7 @@ namespace EncryptionLib.LFSR
         /// <param name="path">путь к файлу</param>
         /// <param name="key">начальное значение регистра / ключ </param>
         /// <param name="args">аргументы функции</param>
-        public LFSR(string path, byte key, string formula):this(path,key)
+        public LFSR(string path, int key, string formula) : this(path, key)
         {
             this.args = ParseFormula(formula);
         }
@@ -107,7 +126,7 @@ namespace EncryptionLib.LFSR
         /// <param name="path">путь к файлу</param>
         /// <param name="key">начальное значение регистра / ключ </param>
         /// <param name="args">аргументы функции</param>
-        public LFSR(byte[] text, byte key, string formula) : this(text, key)
+        public LFSR(int[] text, int key, string formula) : this(text, key)
         {
             this.args = ParseFormula(formula);
         }
@@ -116,11 +135,12 @@ namespace EncryptionLib.LFSR
         #region Getters Setters for Null Constructor
         bool isAllCheck() => text != null && bufkey != -1 && exKey != null && args != null;
 
-        public void SetText(byte[] text) { this.text = text; exKey = new byte[text.Length]; }
-        public void SetText(string path) { this.text = FileIntoBites(path); }
+        public void SetText(byte[] text) { this.text = text.Select(i => (int)i).ToArray(); exKey = new int[text.Length]; }
+        public void SetText(int[] text) { this.text = text; exKey = new int[text.Length]; }
+        public void SetText(string path) { this.text = FileIntoBites(path); exKey = new int[text.Length]; }
         public void SetKey(int key) { bufkey = key; }
-        public void SetArgs(string formula) { args = ParseFormula(formula); }
-        public void SetArgs(params byte[] args) { this.args = args; }
+        public void SetArgs(string formula) { args = ParseFormula(formula); maxarg = args[0]; }
+        public void SetArgs(params int[] args) { this.args = args; maxarg = args.Max(); }
         #endregion
         #region Main functions
         /// <summary>
@@ -131,13 +151,13 @@ namespace EncryptionLib.LFSR
         {
             if (!isAllCheck()) throw new Exception("no");
             int key = bufkey;
-            byte mask = (byte)getMask();                     //можно без переменной сразу передавать в поле маски TODO
+            int mask = (int)getMask();                     //можно без переменной сразу передавать в поле маски TODO
             getHash(key, mask);
             for (int i = 0; i < text.Length; i++)
             {
                 text[i] ^= exKey[i];
             }
-             
+
             return 0;
         }
 
@@ -146,26 +166,31 @@ namespace EncryptionLib.LFSR
         /// </summary>
         public async void TransmuteAsync()
         {
+            isAsyncWorkDone = false;
             await Task.Run(() => Transmute());
+            Task.WaitAll();
+            isAsyncWorkDone = true;
         }
 
         #endregion
         #region StepByStep mod
 
 
-        List<BAR<byte>> AllSteps;
+        List<BWA<int>> AllSteps;
 
-        BAR<byte> pointer;
+        BWA<int> pointer;
         int index = 0;
-        bool StepByStep = false;
+        public bool StepByStep { get; private set; }
+        public bool isAsyncWorkDone {get; private set;}
 
         public async void TransmuteStepByStepAsync()
         {
-            StepByStep = true;
-            AllSteps = new List<BAR<byte>>();
             if (!isAllCheck()) throw new Exception("no");
+            isAsyncWorkDone = false;
+            StepByStep = true;
+            AllSteps = new List<BWA<int>>();
             int key = bufkey;
-            byte mask = (byte)getMask();                     //можно без переменной сразу передавать в поле маски TODO
+            int mask = (int)getMask();                     //можно без переменной сразу передавать в поле маски TODO
             getHash(key, mask);
             Step(0);
             pointer = AllSteps[0];
@@ -174,68 +199,70 @@ namespace EncryptionLib.LFSR
                 await Task.Run(() => Step(i));
                 Task.WaitAll();
             }
+            isAsyncWorkDone = true;
         }
         
         
         void Step(int index)
         {
-            BAR<byte> next = new BAR<byte>();
+            BWA<int> next = new BWA<int>();
             next.Before = text[index];
-            next.After = exKey[index];
+            next.With = exKey[index];
             text[index] ^= exKey[index];
-            next.Result = text[index];
+            next.After = text[index];
             AllSteps.Add(next);
         }
 
 
-        class BAR<T> //Before After Result
+        class BWA<T> //Before With After
         {
-            public BAR() { }
+            public BWA() { }
 
-            public BAR(T before, T after, T result)
+            public BWA(T before, T With, T After)
             {
                 this.Before = before;
-                this.After = after;
-                this.Result = result;
+                this.With = With;
+                this.After = After;
             }
 
             public T Before { get; set; }
-            public T After { get; set; }
+            public T With { get; set; }
 
-            public T Result { get; set; }
+            public T After { get; set; }
 
             public override string ToString()
             {
-                return String.Join(";", Before, After, Result);
+                return String.Join(";", Before, With, After);
             }
 
         }
         public int MoveNext()
         {
-            if (!StepByStep) return 1;//throw new Exception("Step by step not started");
-            if (++index > AllSteps.Count) { --index; return 2; } //throw new Exception("Overflow");
-            if (StepsCount < index) Task.WaitAll();
-            if (StepsCount < index) return 0; //It's all over
+            if (!StepByStep) throw new Exception("Step by step not started");
+            if (++index > StepsCount) { --index; throw new Exception("Overflow"); }
+            if (StepsCount <= index) Task.WaitAll();
+            if (StepsCount <= index) { StepByStep = false; return 1; } //it's over
             pointer = AllSteps[index];
-            return 0;
+            return 0; //next
         }
         public int MovePrev()
         {
             if (!StepByStep) return 1;//throw new Exception("Step by step not started");
             if (--index < 0) { ++index; return 2; } //throw new Exception("Went Abroad");
             if (StepsCount < index) Task.WaitAll();
-            if (StepsCount < index) return 0; //It's all over
+            if (StepsCount < index) { StepByStep = false; return 0; } //It's all over
             pointer = AllSteps[index];
             return 0;
         }
         
+        //? add nullable ex if u nervious
         public int CurrentIndex => index;
-        public byte? GetAfter => pointer.After;
-        public byte? GetBefore => pointer.Before;
-        public byte? GetResult => pointer.Result;
+        public int GetBefore => pointer.Before;
+        public int GetWith => pointer.With;
+        public int GetAfter => pointer.After;
 
         public string GetStep => pointer.ToString();
-        public int? StepsCount => AllSteps.Count;
+        public int StepsCount => AllSteps.Count;
 
         #endregion
         #region Additional
@@ -245,12 +272,12 @@ namespace EncryptionLib.LFSR
         /// По сути просто расширяет ключ до размеров текста используя xns
         /// </summary>
         /// <returns></returns>
-        int getHash(int key, byte mask)
+        int getHash(int key, int mask)
         {
-            exKey[0] = (byte)key;
+            exKey[0] = (int)key;
             for (int i = 1; i < text.Length-1; i++)
             {
-                exKey[i] = (byte)xns(ref key, mask);
+                exKey[i] = (int)xns(ref key, mask);
             }
 
             return 0;
@@ -264,13 +291,13 @@ namespace EncryptionLib.LFSR
         //TODO: Проделать такой же трюк только с битатми и getBit();
         int getMask()
         {
-            char[] _byte = new String('0', 64).ToCharArray();
+            char[] _int = new String('0', 64).ToCharArray();
             for (int i = 0; i < args.Length; i++)
             {
-                _byte[args[i]] = '1';
+                _int[args[i]] = '1';
             }
 
-            return Convert.ToInt32((new string(_byte)).Reverse(), 2);
+            return Convert.ToInt32((new string(_int)).Reverse(), 2);
         }
 
         /// <summary>
@@ -280,12 +307,12 @@ namespace EncryptionLib.LFSR
         /// <param name="obj">Регистр (возвращается благодаря параметру ref)</param>
         /// <param name="mask">Маска преобразования</param>
         /// <returns>так же возвращает obj, но для краткости использовать через ref</returns>
-        int xns(ref int obj, byte mask)
+        int xns(ref int obj, int mask)
         {
-            byte high = (byte)highbit(obj);
-            obj ^= high;            //избавляемся от старшего бита
-            obj = obj << 1;         //смещаем на одну позицию
-            obj += high != 0 ?1:0;  //добавляем бит на начало
+            int high = (int)getBit((int)obj,maxarg);
+            obj ^= high;            //избавляемся от бита за пределами
+            obj = obj << 1;         //смещаем на одну позицию 
+            obj += high != 0 ? 1:0; //добавляем бит на начало
             obj ^= mask;            //используем маску для того, что бы получить хэш
             return obj;
         }
@@ -297,7 +324,7 @@ namespace EncryptionLib.LFSR
         /// <param name="w">word</param>
         /// <param name="n">position</param>
         /// <returns>exists bit in bite</returns>
-        int getBit(byte w, byte n)
+        int getBit(int w, int n)
         {
             return w & (1 << n);
         }

@@ -41,11 +41,24 @@ namespace EncryptionLib.Help
             }
         }
 
-        public static void SaveTextIntoFile(string text, string path)
+        public static void SaveTextIntoFile(string path, string text)
         {
             try
             {
                 File.WriteAllText(path, text);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        public static void SaveBytesIntoFile(string path, byte[] bytes)
+        {
+            try
+            {
+                File.WriteAllBytes(path, bytes);
             }
             catch (Exception ex)
             {
