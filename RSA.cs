@@ -6,7 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 
-namespace EncryptionLib
+namespace EncryptionLib.SyncCrypt
 {
 
     //TODO: Реализовать проверку на простоту числа тестами Ферма и Миллера-Рабина
@@ -21,7 +21,7 @@ namespace EncryptionLib
             Выбрать число e так, чтобы e * d = 1 (mod m)
          
          */
-    class RSA:ICryptoBasic
+    public class RSA
     {
         char[] ru_characters = new char[] { '#', 'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И',
                                             'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С',
@@ -33,17 +33,49 @@ namespace EncryptionLib
                                             'U', 'V', 'W', 'X', 'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7',
                                             '8', '9', '0' };
 
+        public RSA(long p, long q)
+        {
+            this.p = p;
+            this.q = q;
+            UpdateArgs();
+        }
 
-        public string Key { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Input { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        void UpdateArgs()
+        {
+            N = P * Q;
+            M = (P - 1) * (Q - 1);
+            D = Calculate_d_gcdmod(M);
+            E = Calculate_e(D, M);
+        }
 
-        public string Extra => throw new NotImplementedException();
+        long p;
+        public long P
+        {
+            get { return q; }
+            set {
+                p = value;
+                UpdateArgs();
+            }
+        }
+        long q;
+        public long Q 
+        {
+            get { return q; }
+            set {
+                q = value;
+                UpdateArgs();
+            }
+        }
+        public long N { get; private set; }
+        public long M { get; private set; }
+        public long D { get; private set; }
+        public long E { get; private set; }
+
 
         public string Encode()
         {
-            long p = 0, q = 0; //реализовать p и q
 
-            if (isSimple(p) && isSimple(q))
+            if (isSimple(P) && isSimple(Q))
             {
                 string s = "";
 
@@ -58,12 +90,7 @@ namespace EncryptionLib
 
                 s = s.ToUpper();
 
-                long n = p * q;
-                long m = (p - 1) * (q - 1);
-                long d = Calculate_d(m);
-                long e_ = Calculate_e(d, m);
-
-                List<string> result = RSA_Endoce(s, e_, n);
+                List<string> result = RSA_Endoce(s, E, N);
                 string res = "";
 
                 using (StreamWriter sw = new StreamWriter("out1.txt"))
@@ -78,7 +105,6 @@ namespace EncryptionLib
 
                 //передача d и n
 
-                Process.Start("out1.txt");
                 return res;
             }
             else
@@ -87,7 +113,6 @@ namespace EncryptionLib
 
         public string Decode()
         {
-            long d = 0, n = 0; //получение
 
             List<string> input = new List<string>();
 
@@ -100,13 +125,44 @@ namespace EncryptionLib
 
             sr.Close();
 
-            string result = RSA_Dedoce(input, d, n);
+            string result = RSA_Dedoce(input, D, N);
 
             StreamWriter sw = new StreamWriter("out2.txt");
             sw.WriteLine(result);
             sw.Close();
 
-            Process.Start("out2.txt");
+
+            return result;
+        }
+
+        //Быстрое возведение в степень – это алгоритм, который позволяет возвести любое число в натуральную степень 
+        //за сокращенное количество умножений.
+        /*
+         
+         Для любого числа x и четной степени n выполняется тождество:
+         x^n = (x^(n/2))^2 = x^(n/2) ⋅ x^(n/2)
+        Это и является основой алгоритма быстрого возведения в степень. 
+        Поскольку такое разбиение позволяет, за одну операцию умножения, вдвое уменьшить вычисляемую степень.
+        Для случая нечетной степени, достаточно её понизить на единицу:
+
+        x^n = x^n - 1 ⋅ x, при этом (n - 1) четное число.
+         */
+        BigInteger FastPow(BigInteger x, int n)
+        {
+            BigInteger result = 1L;
+            while (n > 0)
+            {
+                if ((n & 1) == 0)
+                {
+                    x *= x;
+                    n >>= 1;
+                }
+                else
+                {
+                    result *= x;
+                    --n;
+                }
+            }
 
             return result;
         }
@@ -121,6 +177,7 @@ namespace EncryptionLib
             Если найдется такое k, 0 <= k < s, что a2k * t = -1 (mod N), перейти к пункту 2
             Число N - составное: выбрать другое нечетное число N, перейти к пункту 1 
          */
+        //Простая проверка на простоту числа
         bool isSimple(long n) //пока простая реализация
         {
             if (n < 2)
@@ -144,9 +201,27 @@ namespace EncryptionLib
             Если r = 0, то b - искомое число (наибольший общий делитель), конец
             Заменить пару чисел <a, b> парой <b, r>, перейти к пункту 2
          */
-        int Euqlid()
+        int gcd(int a, int b)
         {
-            return 0;
+            if (b == 0)
+                return a;
+            else
+                return gcd(b, a % b);
+        }
+
+        private long Calculate_d_gcdmod(long m)
+        {
+            long d = m - 1;
+
+            for (long i = 2; i <= m; i++)
+                if (gcd((int)d, (int)m) !=0) //Выбрать число d взаимно простое с m
+
+                {
+                    d--;
+                    i = 1;
+                }
+
+            return d;
         }
 
         private long Calculate_d(long m)
@@ -154,7 +229,8 @@ namespace EncryptionLib
             long d = m - 1;
 
             for (long i = 2; i <= m; i++)
-                if ((m % i == 0) && (d % i == 0)) //если имеют общие делители
+                if ((m % i == 0) && (d % i == 0)) //Выбрать число d взаимно простое с m
+                    
                 {
                     d--;
                     i = 1;
@@ -165,11 +241,11 @@ namespace EncryptionLib
 
         private long Calculate_e(long d, long m)
         {
-            long e = 10;
+            long e = d + 1;
 
             while (true)
             {
-                if ((e * d) % m == 1)
+                if ((e * d) % m == 1) //Выбрать число e так, чтобы e* d = 1(mod m)
                     break;
                 else
                     e++;
@@ -189,7 +265,7 @@ namespace EncryptionLib
                 int index = Array.IndexOf(en_characters, s[i]);
 
                 bi = new BigInteger(index);
-                bi = BigInteger.Pow(bi, (int)e);
+                bi = FastPow(bi, (int)e); //BigInteger.Pow
 
                 BigInteger n_ = new BigInteger((int)n);
 
@@ -209,8 +285,8 @@ namespace EncryptionLib
 
             foreach (string item in input)
             {
-                bi = new BigInteger(Convert.ToDouble(item));
-                bi = BigInteger.Pow(bi, (int)d);
+                bi = new BigInteger(Convert.ToInt32(item));
+                bi = FastPow(bi, (int)d);   //BigInteger.Pow
 
                 BigInteger n_ = new BigInteger((int)n);
 
