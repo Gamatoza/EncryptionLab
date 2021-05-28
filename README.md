@@ -1,4 +1,4 @@
-# EncryptionLib
+# Default EnDecs
 Encription lib for lab
 .NET 7.1 used
 
@@ -34,5 +34,20 @@ foreach (var item in lfsr.text)
 {
   Console.Write(item);
 }
+```
+# SyncCrypt
+```c#
+using EncryptionLib.SyncCrypt
+...
+//RSA
+RSA rsa = new RSA(89, 317);
+rsa.Encode();
+rsa.Decode("out.txt", "out2.txt");
+//ElGamal
+ElGamal el = new ElGamal();
+//if u want to take args, user el.P|A|Y|X, X - is private key, other public
+el.Encode();
+//if u want to use only decode, add el.SetArgs
+el.Decode("out.txt", "out2.txt");
 ```
 

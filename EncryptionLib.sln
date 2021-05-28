@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncryptionLib", "EncryptionLib.csproj", "{733DFDFD-A45C-426C-9DA3-1EC5227F9B8C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LFSRForms", "..\LFSRForms\LFSRForms.csproj", "{36A7419E-F95D-43C7-A118-FE19223E19F2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTest", "..\ConsoleTest\ConsoleTest.csproj", "{11EF4577-7B47-4670-9C61-34952D6D8B81}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{733DFDFD-A45C-426C-9DA3-1EC5227F9B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{733DFDFD-A45C-426C-9DA3-1EC5227F9B8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{733DFDFD-A45C-426C-9DA3-1EC5227F9B8C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36A7419E-F95D-43C7-A118-FE19223E19F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36A7419E-F95D-43C7-A118-FE19223E19F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36A7419E-F95D-43C7-A118-FE19223E19F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36A7419E-F95D-43C7-A118-FE19223E19F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11EF4577-7B47-4670-9C61-34952D6D8B81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11EF4577-7B47-4670-9C61-34952D6D8B81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11EF4577-7B47-4670-9C61-34952D6D8B81}.Release|Any CPU.ActiveCfg = Release|Any CPU

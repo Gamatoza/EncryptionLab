@@ -26,12 +26,14 @@ namespace EncryptionLib.SyncCrypt
         char[] ru_characters = new char[] { '#', 'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И',
                                             'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С',
                                             'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ы', 'Ъ',
-                                            'Э', 'Ю', 'Я', ' ', '1', '2', '3', '4', '5', '6', '7',
-                                            '8', '9', '0' };
+                                            'Э', 'Ю', 'Я', ' ', 
+                                            '1', '2', '3', '4', '5', '6', '7','8', '9', '0', 
+                                            ',', '.', '!', '?', ':', ';', '\'','"', '/','\\' };
         char[] en_characters = new char[] { '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
                                             'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-                                            'U', 'V', 'W', 'X', 'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7',
-                                            '8', '9', '0' };
+                                            'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 
+                                            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+                                            ',', '.', '!', '?', ':', ';', '\'','"', '/','\\' };
 
         public RSA(long p, long q)
         {
@@ -44,7 +46,7 @@ namespace EncryptionLib.SyncCrypt
         {
             N = P * Q;
             M = (P - 1) * (Q - 1);
-            D = Calculate_d_gcdmod(M);
+            D = Calculate_d(M);//Calculate_dNOD(M); только с малыми простыми числами, ибо это рекурсивно
             E = Calculate_e(D, M);
         }
 
@@ -71,15 +73,20 @@ namespace EncryptionLib.SyncCrypt
         public long D { get; private set; }
         public long E { get; private set; }
 
-
-        public string Encode()
+        /// <summary>
+        /// Внешняя оболочка для EncodeRSA
+        /// </summary>
+        /// <param name="input_path"></param>
+        /// <param name="output_path"></param>
+        /// <returns></returns>
+        public string Encode(string input_path = "in.txt", string output_path = "out.txt")
         {
 
             if (isSimple(P) && isSimple(Q))
             {
                 string s = "";
 
-                StreamReader sr = new StreamReader("in.txt");
+                StreamReader sr = new StreamReader(input_path);
 
                 while (!sr.EndOfStream)
                 {
@@ -93,7 +100,7 @@ namespace EncryptionLib.SyncCrypt
                 List<string> result = RSA_Endoce(s, E, N);
                 string res = "";
 
-                using (StreamWriter sw = new StreamWriter("out1.txt"))
+                using (StreamWriter sw = new StreamWriter(output_path))
                 {
                     foreach (string item in result)
                     {
@@ -111,12 +118,12 @@ namespace EncryptionLib.SyncCrypt
                 throw new Exception("the p or q is not simple");
         }
 
-        public string Decode()
+        public string Decode(string input_path = "in.txt", string output_path = "out.txt")
         {
 
             List<string> input = new List<string>();
 
-            StreamReader sr = new StreamReader("out1.txt");
+            StreamReader sr = new StreamReader(input_path);
 
             while (!sr.EndOfStream)
             {
@@ -127,7 +134,7 @@ namespace EncryptionLib.SyncCrypt
 
             string result = RSA_Dedoce(input, D, N);
 
-            StreamWriter sw = new StreamWriter("out2.txt");
+            StreamWriter sw = new StreamWriter(output_path);
             sw.WriteLine(result);
             sw.Close();
 
@@ -163,10 +170,8 @@ namespace EncryptionLib.SyncCrypt
                     --n;
                 }
             }
-
             return result;
         }
-
 
         /*
          Алгоритм поиска простых чисел
@@ -182,10 +187,8 @@ namespace EncryptionLib.SyncCrypt
         {
             if (n < 2)
                 return false;
-
             if (n == 2)
                 return true;
-
             for (long i = 2; i < n; i++)
                 if (n % i == 0)
                     return false;
@@ -201,51 +204,77 @@ namespace EncryptionLib.SyncCrypt
             Если r = 0, то b - искомое число (наибольший общий делитель), конец
             Заменить пару чисел <a, b> парой <b, r>, перейти к пункту 2
          */
-        int gcd(int a, int b)
+        int gcd(int val1, int val2)
         {
-            if (b == 0)
+            /*if (b == 0)
                 return a;
             else
-                return gcd(b, a % b);
+                return gcd(b, a % b);*/
+            while ((val1 != 0) && (val2 != 0))
+            {
+                if (val1 > val2)
+                    val1 %= val2;
+                else
+                    val2 %= val1;
+            }
+            return Math.Max(val1, val2);
         }
 
         private long Calculate_d_gcdmod(long m)
         {
             long d = m - 1;
-
             for (long i = 2; i <= m; i++)
                 if (gcd((int)d, (int)m) !=0) //Выбрать число d взаимно простое с m
-
                 {
                     d--;
                     i = 1;
                 }
-
             return d;
         }
 
         private long Calculate_d(long m)
         {
-            long d = m - 1;
-
+            long d = 0;
             for (long i = 2; i <= m; i++)
-                if ((m % i == 0) && (d % i == 0)) //Выбрать число d взаимно простое с m
-                    
+                if ((m % i == 0) && (d % i == 0)) //Выбрать число d взаимно простое с m   
                 {
-                    d--;
+                    d++;
                     i = 1;
                 }
-
             return d;
+        }
+
+
+        private long Calculate_dNOD(long m)
+        {
+            long d = m - 1;
+            for (int i = 0; i <= m; i++)
+            {
+                if (NOD(m, d) == 1)
+                    return d;
+                else d--;
+            }
+            return -1;
+        }
+
+        private long NOD(long a, long b)
+        {
+            if (a == b)
+                return a;
+            else
+                if (a > b)
+                return NOD(a - b, b);
+            else
+                return NOD(b - a, a);
         }
 
         private long Calculate_e(long d, long m)
         {
-            long e = d + 1;
+            long e = 0;
 
             while (true)
             {
-                if ((e * d) % m == 1) //Выбрать число e так, чтобы e* d = 1(mod m)
+                if (e * d % m == 1) //Выбрать число e так, чтобы e* d = 1(mod m)
                     break;
                 else
                     e++;
@@ -263,9 +292,10 @@ namespace EncryptionLib.SyncCrypt
             for (int i = 0; i < s.Length; i++)
             {
                 int index = Array.IndexOf(en_characters, s[i]);
-
+                char buf = s[i];
                 bi = new BigInteger(index);
-                bi = FastPow(bi, (int)e); //BigInteger.Pow
+                if (index == -1) throw new Exception("There is no letter");
+                bi = BigInteger.Pow(bi, (int)e); //FastPow(bi, (int)e); //
 
                 BigInteger n_ = new BigInteger((int)n);
 
@@ -286,7 +316,7 @@ namespace EncryptionLib.SyncCrypt
             foreach (string item in input)
             {
                 bi = new BigInteger(Convert.ToInt32(item));
-                bi = FastPow(bi, (int)d);   //BigInteger.Pow
+                bi = BigInteger.Pow(bi, (int)d); //FastPow(bi, (int)d);   //
 
                 BigInteger n_ = new BigInteger((int)n);
 
