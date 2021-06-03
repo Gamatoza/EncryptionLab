@@ -7,7 +7,7 @@ using EncryptionLib.SyncCrypt;
 
 namespace EncryptionLib.DigitalSignature
 {
-    class LDS_RSA //LightDigitalSignature_RSA
+    public class lighDS_RSA //LightDigitalSignature_RSA
     {
 
         char[] characters = new char[] { '#', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-' };
@@ -45,13 +45,13 @@ namespace EncryptionLib.DigitalSignature
         }
 
 
-        public LDS_RSA(long p, long q)
+        public lighDS_RSA(long p, long q)
         {
             this.p = p;
             this.q = q;
         }
 
-        string GenerateKey(string input_path,string output_path)
+        public string GenerateKey(string input_path,string output_path)
         {
 
             if (IsTheNumberSimple(p) && IsTheNumberSimple(q))
@@ -80,7 +80,7 @@ namespace EncryptionLib.DigitalSignature
                 throw new Exception("p or q is not simple!");
         }
 
-        bool CheckFile(string file_path, long d, long n)
+        public bool CheckFile(string file_path, long d, long n)
         {
             List<string> input = new List<string>();
 
@@ -170,12 +170,12 @@ namespace EncryptionLib.DigitalSignature
         //вычисление параметра d. d должно быть взаимно простым с m
         private long Calculate_d(long m)
         {
-            long d = m - 1;
+            long d = 2;
 
             for (long i = 2; i <= m; i++)
                 if ((m % i == 0) && (d % i == 0)) //если имеют общие делители
                 {
-                    d--;
+                    d++;
                     i = 1;
                 }
 
