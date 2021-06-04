@@ -55,8 +55,8 @@ el.Decode("out.txt", "out2.txt");
 using EncryptionLib.DigitalSignature
 ...
 lightDSA dsa = new lightDSA("lorem");
-            string some = dsa.GetSignature();
-            bool gotit = dsa.CheckSignature("lorem", some);
-            Console.WriteLine(some);
-            Console.WriteLine(gotit?"yeah":"nonono");
+string some = dsa.GetSignature();
+bool gotit = dsa.CheckSignature("lorem", some);
+Console.WriteLine(some);
+Console.WriteLine(gotit?"yeah":"nonono");
 ```
