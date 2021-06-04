@@ -41,7 +41,7 @@ using EncryptionLib.SyncCrypt
 ...
 //RSA
 RSA rsa = new RSA(89, 317);
-rsa.Encode(); //[input.txt], [outout.txt] // 3th paramether is a permanent false to useAskii, but u can change it
+rsa.Encode(); //[input.txt], [outout.txt] // 3th paramether is a permanent false to useAskii
 rsa.Decode("out.txt", "out2.txt"); //[input.txt], [outout.txt]
 //ElGamal
 ElGamal el = new ElGamal();
