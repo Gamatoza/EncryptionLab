@@ -41,13 +41,22 @@ using EncryptionLib.SyncCrypt
 ...
 //RSA
 RSA rsa = new RSA(89, 317);
-rsa.Encode();
-rsa.Decode("out.txt", "out2.txt");
+rsa.Encode(); //[input.txt], [outout.txt] // 3th paramether is a permanent false to useAskii, but u can change it
+rsa.Decode("out.txt", "out2.txt"); //[input.txt], [outout.txt]
 //ElGamal
 ElGamal el = new ElGamal();
 //if u want to take args, user el.P|A|Y|X, X - is private key, other public
-el.Encode();
+el.Encode(); //[input.txt], [outout.txt]
 //if u want to use only decode, add el.SetArgs
 el.Decode("out.txt", "out2.txt");
 ```
-
+# DigitalSignature
+```c#
+using EncryptionLib.DigitalSignature
+...
+lightDSA dsa = new lightDSA("lorem");
+            string some = dsa.GetSignature();
+            bool gotit = dsa.CheckSignature("lorem", some);
+            Console.WriteLine(some);
+            Console.WriteLine(gotit?"yeah":"nonono");
+```
